@@ -82,6 +82,11 @@ async function commonAfterAll() {
 const u1Token = createToken({ username: "u1", isAdmin: false });
 //Added adminToken to test admin routes
 const adminToken = createToken({ username: "admin", isAdmin: true });
+//added admin or self token to test routes that require admin or self
+const adminOrSelfToken = createToken({
+	username: "u1",
+	isAdmin: false || true,
+});
 
 module.exports = {
 	commonBeforeAll,
@@ -90,4 +95,5 @@ module.exports = {
 	commonAfterAll,
 	u1Token,
 	adminToken,
+	adminOrSelfToken,
 };
