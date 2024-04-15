@@ -3,16 +3,16 @@
 const request = require("supertest");
 
 const db = require("../db.js");
-const app = require("../app");
-const Job = require("../models/jobs");
-const { BadRequestError, NotFoundError } = require("../expressError");
+const app = require("../app.js");
+const Job = require("./job.js");
+const { BadRequestError, NotFoundError } = require("../expressError.js");
 
 const {
 	commonBeforeAll,
 	commonBeforeEach,
 	commonAfterEach,
 	commonAfterAll,
-} = require("./_testCommon");
+} = require("./_testCommon.js");
 
 let jobId;
 let jobIds;
