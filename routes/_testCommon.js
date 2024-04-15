@@ -85,7 +85,7 @@ const adminToken = createToken({ username: "admin", isAdmin: true });
 //added admin or self token to test routes that require admin or self
 const adminOrSelfToken = createToken({
 	username: "u1",
-	isAdmin: false || true,
+	isAdmin: false || true, //may be a problem?
 });
 
 module.exports = {
