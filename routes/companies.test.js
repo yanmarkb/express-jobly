@@ -3,6 +3,7 @@
 const request = require("supertest");
 //Import new adminToken from _testCommon.js
 const { adminToken } = require("./_testCommon");
+const { testJobIds } = require("./_testCommon");
 
 const db = require("../db");
 const app = require("../app");

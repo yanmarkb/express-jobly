@@ -11,6 +11,7 @@ const { adminToken } = require("./_testCommon");
 const { adminOrSelfToken } = require("./_testCommon");
 //Import new ensureAdminOrSelf from auth.js
 const { ensureAdminOrSelf } = require("../middleware/auth");
+const { testJobIds } = require("./_testCommon");
 
 const {
 	commonBeforeAll,
