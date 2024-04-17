@@ -10,7 +10,11 @@ const { adminToken } = require("./_testCommon");
 //imported new admin or self token from _testCommon.js
 const { adminOrSelfToken } = require("./_testCommon");
 //Import new ensureAdminOrSelf from auth.js
-const { ensureAdminOrSelf } = require("../middleware/auth");
+const {
+	ensureAdminOrSelf,
+	authenticateJWT,
+	ensureAdmin,
+} = require("../middleware/auth");
 const { testJobIds } = require("./_testCommon");
 
 const {
@@ -129,6 +133,51 @@ describe("POST /users", function () {
 			})
 			.set("authorization", `Bearer ${u1Token}`);
 		expect(resp.statusCode).toEqual(401);
+	});
+});
+
+/************************************** POST /users/:username/jobs/:id */
+
+describe("POST /:username/jobs/:id", function () {
+	test("works for users", async function () {
+		// Query the database to get the ID of the first job
+		const jobRes = await db.query(`SELECT id FROM jobs LIMIT 1`);
+		const jobId = jobRes.rows[0].id;
+
+		// Make the request
+		const resp = await request(app)
+			.post(`/u1/jobs/${jobId}`)
+			.set("authorization", `Bearer ${u1Token}`);
+
+		console.log(resp.statusCode);
+		console.log(resp.body);
+
+		expect(resp.statusCode).toEqual(200);
+		expect(resp.body).toEqual({ applied: jobId.toString() });
+	});
+
+	test("unauth for anon", async function () {
+		// Query the database to get the ID of the first job
+		const jobRes = await db.query(`SELECT id FROM jobs LIMIT 1`);
+		const jobId = jobRes.rows[0].id;
+
+		// Use the job ID in the request
+		const resp = await request(app).post(`/u1/jobs/${jobId}`);
+		expect(resp.statusCode).toEqual(401);
+	});
+
+	test("not found if no such user", async function () {
+		const resp = await request(app)
+			.post("/no-such-user/jobs/1")
+			.set("authorization", `Bearer ${u1Token}`);
+		expect(resp.statusCode).toEqual(404);
+	});
+
+	test("not found if no such job", async function () {
+		const resp = await request(app)
+			.post("/u1/jobs/0")
+			.set("authorization", `Bearer ${u1Token}`);
+		expect(resp.statusCode).toEqual(404);
 	});
 });
 

@@ -157,7 +157,9 @@ describe("get", function () {
 });
 
 test("get user with jobs", async function () {
+	//Was having issues retrieving this but I figured I could grab the id from the db and use that to apply for a job
 	const { rows } = await db.query(`SELECT id FROM jobs LIMIT 1`);
+	//Applied the id to a variable I could use later
 	const testJobId = rows[0].id;
 
 	await User.apply("u1", testJobId);

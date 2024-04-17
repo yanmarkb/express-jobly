@@ -9,6 +9,7 @@ const {
 	ensureLoggedIn,
 	ensureAdmin,
 	ensureAdminOrSelf,
+	authenticateJWT,
 } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
@@ -30,8 +31,8 @@ const router = express.Router();
  * Authorization required: login
  **/
 
+//Changed permissions to ensureAdmin
 router.post("/", ensureAdmin, async function (req, res, next) {
-	//Changed permissions to ensureAdmin
 	try {
 		const validator = jsonschema.validate(req.body, userNewSchema);
 		if (!validator.valid) {
@@ -47,16 +48,23 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 	}
 });
 
-router.post("/:username/jobs/:id", async function (req, res, next) {
-	try {
-		const username = req.params.username;
-		const jobId = req.params.id;
-		await User.apply(username, jobId);
-		return res.json({ applied: jobId });
-	} catch (err) {
-		return next(err);
+//added a new route to apply for a job
+router.post(
+	"/users/:username/jobs/:id",
+	authenticateJWT,
+	ensureLoggedIn,
+	ensureAdminOrSelf,
+	async function (req, res, next) {
+		try {
+			const username = req.params.username;
+			const jobId = req.params.id;
+			await User.apply(username, jobId);
+			return res.json({ applied: jobId });
+		} catch (err) {
+			return next(err);
+		}
 	}
-});
+);
 
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *

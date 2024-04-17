@@ -204,23 +204,33 @@ class User {
 		if (!user) throw new NotFoundError(`No user: ${username}`);
 	}
 
+	// This is a static method on the User class that allows a user to apply for a job.
 	static async apply(username, jobId) {
+		console.log("APPLYING FOR JOB:", jobId);
+		// First, we check if the user has already applied for this job.
+		// We do this by querying the applications table in the database,
+		// looking for an application with the given username and job ID.
 		const duplicateCheck = await db.query(
 			`SELECT username
-       FROM applications
-       WHERE username = $1 AND job_id = $2`,
+        FROM applications
+        WHERE username = $1 AND job_id = $2`,
 			[username, jobId]
 		);
 
+		// If the query returns a result, it means the user has already applied for this job.
+		// In this case, we throw an error.
 		if (duplicateCheck.rows[0]) {
 			throw new BadRequestError(
 				`Duplicate application: ${username} has already applied for job ${jobId}`
 			);
 		}
 
+		// If the query does not return a result, it means the user has not yet applied for this job.
+		// In this case, we insert a new application into the applications table in the database.
+		// The new application has the given username and job ID.
 		await db.query(
 			`INSERT INTO applications (username, job_id)
-       VALUES ($1, $2)`,
+        VALUES ($1, $2)`,
 			[username, jobId]
 		);
 	}
