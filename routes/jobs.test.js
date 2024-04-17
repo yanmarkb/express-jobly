@@ -200,7 +200,7 @@ describe("GET /jobs", function () {
 describe("GET /jobs/:id", function () {
 	test("works for anon", async function () {
 		const result = await db.query("SELECT * FROM jobs ORDER BY id LIMIT 1");
-		console.log("result.rows[0]:", result.rows[0]);
+		// console.log("result.rows[0]:", result.rows[0]);
 		const job = result.rows[0];
 
 		const resp = await request(app).get(`/jobs/${job.id}`);

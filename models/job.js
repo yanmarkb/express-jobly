@@ -24,7 +24,6 @@ class Job {
 			[title, salary, equity, company_handle]
 		);
 		const job = result.rows[0];
-		console.log("job:", job);
 		return job;
 	}
 

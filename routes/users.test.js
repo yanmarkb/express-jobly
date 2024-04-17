@@ -147,6 +147,7 @@ describe("GET /users", function () {
 					lastName: "AdminL",
 					email: "admin@user.com",
 					isAdmin: true,
+					jobs: [],
 				},
 				{
 					username: "u1",
@@ -154,6 +155,7 @@ describe("GET /users", function () {
 					lastName: "U1L",
 					email: "user1@user.com",
 					isAdmin: false,
+					jobs: [],
 				},
 				{
 					username: "u2",
@@ -161,6 +163,7 @@ describe("GET /users", function () {
 					lastName: "U2L",
 					email: "user2@user.com",
 					isAdmin: false,
+					jobs: [],
 				},
 				{
 					username: "u3",
@@ -168,6 +171,7 @@ describe("GET /users", function () {
 					lastName: "U3L",
 					email: "user3@user.com",
 					isAdmin: false,
+					jobs: [],
 				},
 			],
 		});
@@ -212,6 +216,7 @@ describe("GET /users/:username", function () {
 				lastName: "U1L",
 				email: "user1@user.com",
 				isAdmin: false,
+				jobs: [],
 			},
 		});
 	});
@@ -228,6 +233,7 @@ describe("GET /users/:username", function () {
 					lastName: "U1L",
 					email: "user1@user.com",
 					isAdmin: false,
+					jobs: [],
 				},
 			});
 		});
@@ -243,6 +249,7 @@ describe("GET /users/:username", function () {
 					lastName: "U1L",
 					email: "user1@user.com",
 					isAdmin: false,
+					jobs: [],
 				},
 			});
 		});
