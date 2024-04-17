@@ -28,15 +28,43 @@ class Job {
 		return job;
 	}
 
-	static async findAll() {
-		const result = await db.query(
-			`SELECT id, title, salary, equity, company_handle
-         FROM jobs
-         ORDER BY id`
-		);
-		return result.rows;
-	}
+	static async findAll({ title, minSalary, hasEquity } = {}) {
+		let query = `SELECT id,
+                            title,
+                            salary,
+                            equity,
+                            company_handle
+                     FROM jobs`;
+		let whereExpressions = [];
+		let queryValues = [];
 
+		// For each possible search term, add to whereExpressions and queryValues so
+		// we can generate the right SQL
+
+		if (title !== undefined) {
+			queryValues.push(`%${title}%`);
+			whereExpressions.push(`title ILIKE $${queryValues.length}`);
+		}
+
+		if (minSalary !== undefined) {
+			queryValues.push(minSalary);
+			whereExpressions.push(`salary >= $${queryValues.length}`);
+		}
+
+		if (hasEquity === true) {
+			whereExpressions.push(`equity > 0`);
+		}
+
+		if (whereExpressions.length > 0) {
+			query += " WHERE " + whereExpressions.join(" AND ");
+		}
+
+		// Finalize query and return results
+
+		query += " ORDER BY title";
+		const jobsRes = await db.query(query, queryValues);
+		return jobsRes.rows;
+	}
 	static async get(id) {
 		const jobRes = await db.query(
 			`SELECT id, title, salary, equity, company_handle

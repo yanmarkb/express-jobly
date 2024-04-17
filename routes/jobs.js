@@ -32,8 +32,14 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 /** GET /  =>  { jobs: [ { id, title, salary, equity, company_handle }, ...] } */
 // This is a route handler for GET requests to the "/jobs" endpoint.
 router.get("/", async function (req, res, next) {
+	const q = req.query;
+	// convert minSalary to a number
+	if (q.minSalary !== undefined) q.minSalary = +q.minSalary;
+	// convert hasEquity to a boolean
+	q.hasEquity = q.hasEquity === "true";
+
 	try {
-		const jobs = await Job.findAll();
+		const jobs = await Job.findAll(q);
 		return res.json({ jobs });
 	} catch (err) {
 		return next(err);

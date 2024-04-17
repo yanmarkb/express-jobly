@@ -118,6 +118,83 @@ describe("GET /jobs", function () {
 			],
 		});
 	});
+
+	// New tests for filtering functionality
+	test("ok: filtering by title", async function () {
+		const resp = await request(app).get("/jobs").query({ title: "Job1" });
+		expect(resp.body).toEqual({
+			jobs: [
+				{
+					id: expect.any(Number),
+					title: "Job1",
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+			],
+		});
+	});
+
+	test("ok: filtering by minSalary", async function () {
+		const resp = await request(app).get("/jobs").query({ minSalary: 300000 });
+		expect(resp.body).toEqual({
+			jobs: [
+				{
+					id: expect.any(Number),
+					title: expect.any(String),
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+			],
+		});
+	});
+
+	test("ok: filtering by hasEquity", async function () {
+		const resp = await request(app).get("/jobs").query({ hasEquity: true });
+		expect(resp.body).toEqual({
+			jobs: [
+				{
+					id: expect.any(Number),
+					title: expect.any(String),
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+				{
+					id: expect.any(Number),
+					title: expect.any(String),
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+				{
+					id: expect.any(Number),
+					title: expect.any(String),
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+			],
+		});
+	});
+
+	test("ok: filtering by multiple parameters", async function () {
+		const resp = await request(app)
+			.get("/jobs")
+			.query({ title: "Job3", minSalary: 300000, hasEquity: true });
+		expect(resp.body).toEqual({
+			jobs: [
+				{
+					id: expect.any(Number),
+					title: "Job3",
+					salary: expect.any(Number),
+					equity: expect.any(String),
+					company_handle: expect.any(String),
+				},
+			],
+		});
+	});
 });
 
 describe("GET /jobs/:id", function () {
