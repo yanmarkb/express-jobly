@@ -115,24 +115,43 @@ class Company {
 	 **/
 
 	static async get(handle) {
+		// Query to get the company data
 		const companyRes = await db.query(
 			`SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`,
+            name,
+            description,
+            num_employees AS "numEmployees",
+            logo_url AS "logoUrl"
+        FROM companies
+        WHERE handle = $1`,
 			[handle]
 		);
 
+		// New query to get the jobs for the company
+		// This assumes you have a jobs table with a company_handle column
+		const jobsRes = await db.query(
+			`SELECT id, 
+            title, 
+            salary, 
+            equity 
+        FROM jobs 
+        WHERE company_handle = $1`,
+			[handle]
+		);
+
+		// Get the company data from the first query
 		const company = companyRes.rows[0];
 
+		// If there's no company with the given handle, throw an error
 		if (!company) throw new NotFoundError(`No company: ${handle}`);
 
+		// Add the jobs to the company object
+		// The jobs are an array of job objects, each with id, title, salary, and equity properties
+		company.jobs = jobsRes.rows;
+
+		// Return the company object, which now includes the jobs
 		return company;
 	}
-
 	/** Update company data with `data`.
 	 *
 	 * This is a "partial update" --- it's fine if data doesn't contain all the

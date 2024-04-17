@@ -8,6 +8,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const Company = require("../models/company");
+const Job = require("../models/job");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
@@ -77,13 +78,24 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:handle", async function (req, res, next) {
 	try {
+		// Get the company's handle from the URL and use it to fetch the company's details
 		const company = await Company.get(req.params.handle);
+
+		// Use the company's handle to fetch all jobs associated with this company
+		const jobs = await Job.findAllByCompany(req.params.handle);
+
+		// If there are jobs for the company, add them to the company object
+		if (jobs.length > 0) {
+			company.jobs = jobs;
+		}
+
+		// Send the company data (including the jobs, if any) back to whoever made the request
 		return res.json({ company });
 	} catch (err) {
+		// If anything went wrong (like the company doesn't exist), send the error to the next error handler
 		return next(err);
 	}
 });
-
 /** PATCH /[handle] { fld1, fld2, ... } => { company }
  *
  * Patches company data.

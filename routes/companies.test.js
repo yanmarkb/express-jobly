@@ -4,6 +4,7 @@ const request = require("supertest");
 //Import new adminToken from _testCommon.js
 const { adminToken } = require("./_testCommon");
 const { testJobIds } = require("./_testCommon");
+const Job = require("../models/job");
 
 const db = require("../db");
 const app = require("../app");
@@ -263,6 +264,15 @@ describe("GET /companies", function () {
 
 describe("GET /companies/:handle", function () {
 	test("works for anon", async function () {
+		// Query to get the job data for company c1
+		const jobRes = await db.query(
+			`SELECT id, title, salary, equity 
+            FROM jobs 
+            WHERE title = $1`,
+			["Job1"]
+		);
+		const job = jobRes.rows[0];
+
 		const resp = await request(app).get(`/companies/c1`);
 		expect(resp.body).toEqual({
 			company: {
@@ -271,11 +281,16 @@ describe("GET /companies/:handle", function () {
 				description: "Desc1",
 				numEmployees: 1,
 				logoUrl: "http://c1.img",
+				jobs: [job],
 			},
 		});
 	});
 
 	test("works for anon: company w/o jobs", async function () {
+		// Query the database to get the job id
+		const jobs = await Job.findAll({ title: "Job2" });
+		const jobId = jobs[0].id;
+
 		const resp = await request(app).get(`/companies/c2`);
 		expect(resp.body).toEqual({
 			company: {
@@ -284,6 +299,14 @@ describe("GET /companies/:handle", function () {
 				description: "Desc2",
 				numEmployees: 2,
 				logoUrl: "http://c2.img",
+				jobs: [
+					{
+						equity: "0.2",
+						id: jobId,
+						salary: 200000,
+						title: "Job2",
+					},
+				],
 			},
 		});
 	});
@@ -293,7 +316,6 @@ describe("GET /companies/:handle", function () {
 		expect(resp.statusCode).toEqual(404);
 	});
 });
-
 /************************************** PATCH /companies/:handle */
 
 describe("PATCH /companies/:handle", function () {

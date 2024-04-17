@@ -1,6 +1,7 @@
 "use strict";
 
 const db = require("../db.js");
+const Job = require("./job.js");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const Company = require("./company.js");
 const {
@@ -186,13 +187,24 @@ describe("findAll", function () {
 
 describe("get", function () {
 	test("works", async function () {
+		const jobs = await Job.findAll({ title: "j1" });
+		const jobId = jobs[0].id;
+
 		let company = await Company.get("c1");
 		expect(company).toEqual({
 			handle: "c1",
 			name: "C1",
 			description: "Desc1",
-			numEmployees: 1,
 			logoUrl: "http://c1.img",
+			numEmployees: 1,
+			jobs: [
+				{
+					equity: "0.1",
+					id: jobId,
+					salary: 100,
+					title: "j1",
+				},
+			],
 		});
 	});
 
