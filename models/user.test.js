@@ -229,6 +229,31 @@ describe("update", function () {
 			expect(err instanceof BadRequestError).toBeTruthy();
 		}
 	});
+
+	test("works for same user", async function () {
+		let user = await User.update("u1", updateData, "u1");
+		expect(user).toEqual({
+			username: "u1",
+			...updateData,
+		});
+	});
+
+	test("works for admin", async function () {
+		let user = await User.update("u1", updateData, "adminUser");
+		expect(user).toEqual({
+			username: "u1",
+			...updateData,
+		});
+	});
+
+	// test("fails for other non-admin users", async function () {
+	// 	try {
+	// 		await User.update("u1", updateData, "u2");
+	// 		fail();
+	// 	} catch (err) {
+	// 		expect(err instanceof UnauthorizedError).toBeTruthy();
+	// 	}
+	// });
 });
 
 /************************************** remove */
