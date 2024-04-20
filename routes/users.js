@@ -59,8 +59,10 @@ router.post(
 			const username = req.params.username;
 			const jobId = req.params.id;
 			await User.apply(username, jobId);
+			console.log("USER W/ JOB:", jobId);
 			return res.json({ applied: jobId });
 		} catch (err) {
+			console.log("Hit user but errored:", err);
 			return next(err);
 		}
 	}
