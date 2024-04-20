@@ -169,3 +169,36 @@ describe("remove", function () {
 		}
 	});
 });
+
+describe("applyForJob", function () {
+	test("works", async function () {
+		const username = "u1";
+		const result = await Job.applyForJob(username, jobId);
+		expect(result).toEqual({ job_id: jobId });
+
+		// Verify the application was stored in the database
+		const res = await db.query(
+			`SELECT username, job_id FROM applications WHERE username = $1 AND job_id = $2`,
+			[username, jobId]
+		);
+		expect(res.rows).toEqual([{ username: username, job_id: jobId }]);
+	});
+
+	test("fails with non-existent user", async function () {
+		try {
+			await Job.applyForJob("no-such-user", jobId);
+			fail();
+		} catch (err) {
+			expect(err instanceof NotFoundError).toBeTruthy();
+		}
+	});
+
+	test("fails with non-existent job", async function () {
+		try {
+			await Job.applyForJob("u1", 999);
+			fail();
+		} catch (err) {
+			expect(err instanceof NotFoundError).toBeTruthy();
+		}
+	});
+});
