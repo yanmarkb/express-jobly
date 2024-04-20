@@ -138,7 +138,7 @@ describe("POST /users", function () {
 
 /************************************** POST /users/:username/jobs/:id */
 
-describe("POST /:username/jobs/:id", function () {
+describe("POST /users/:username/jobs/:id", function () {
 	test("works for users", async function () {
 		// Query the database to get the ID of the first job
 		const jobRes = await db.query(`SELECT id FROM jobs LIMIT 1`);
@@ -146,7 +146,7 @@ describe("POST /:username/jobs/:id", function () {
 
 		// Make the request
 		const resp = await request(app)
-			.post(`/u1/jobs/${jobId}`)
+			.post(`/users/u1/jobs/${jobId}`)
 			.set("authorization", `Bearer ${u1Token}`);
 
 		console.log(resp.statusCode);

@@ -58,6 +58,7 @@ router.get("/:id", async function (req, res, next) {
 	}
 });
 
+
 /** PATCH /[id] { fld1, fld2, ... } => { job: { id, title, salary, equity, company_handle } } */
 // This is a route handler for PATCH requests to the "/jobs/:id" endpoint.
 
