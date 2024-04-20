@@ -159,7 +159,7 @@ describe("POST /users/:username/jobs/:id", function () {
 		const jobId = jobRes.rows[0].id;
 
 		// Use the job ID in the request
-		const resp = await request(app).post(`/u1/jobs/${jobId}`);
+		const resp = await request(app).post(`/users/u1/jobs/${jobId}`);
 		expect(resp.statusCode).toEqual(401);
 	});
 
