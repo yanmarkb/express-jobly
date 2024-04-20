@@ -24,6 +24,7 @@ class Job {
 			[title, salary, equity, company_handle]
 		);
 		const job = result.rows[0];
+		console.log("job:", job);
 		return job;
 	}
 
@@ -116,6 +117,31 @@ class Job {
 		const job = result.rows[0];
 
 		if (!job) throw new NotFoundError(`No job: ${id}`);
+	}
+
+	static async applyForJob(username, jobId) {
+		// Check if the user exists
+		const userRes = await db.query(
+			`SELECT username FROM users WHERE username = $1`,
+			[username]
+		);
+		if (userRes.rows.length === 0) {
+			throw new NotFoundError(`No such user: ${username}`);
+		}
+
+		// Check if the job exists
+		const jobRes = await db.query(`SELECT id FROM jobs WHERE id = $1`, [jobId]);
+		if (jobRes.rows.length === 0) {
+			throw new NotFoundError(`No such job: ${jobId}`);
+		}
+
+		const result = await db.query(
+			`INSERT INTO applications (username, job_id)
+        VALUES ($1, $2)
+        RETURNING job_id`,
+			[username, jobId]
+		);
+		return result.rows[0];
 	}
 }
 

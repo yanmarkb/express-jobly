@@ -50,7 +50,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 
 //added a new route to apply for a job
 router.post(
-	"/users/:username/jobs/:id",
+	"/:username/jobs/:id",
 	authenticateJWT,
 	ensureLoggedIn,
 	ensureAdminOrSelf,
